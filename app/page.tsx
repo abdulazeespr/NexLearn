@@ -18,6 +18,7 @@ import "react-phone-number-input/style.css";
 import { sendOtp, verifyOtp, createProfile } from "@/lib/api";
 import { useAppDispatch } from "@/store/hooks";
 import { setTokens } from "@/store/authSlice";
+import PhotoUploadBox from "@/components/photocard";
 
 export default function Home() {
   const [step, setStep] = useState<"phone" | "sms" | "details">("details");
@@ -206,7 +207,7 @@ export default function Home() {
             </CardFooter>
           </Card>
         ) : step === "sms" ? (
-          <Card className="h-full">
+          <Card>
             <CardHeader>
               <CardTitle className="text-2xl font-semibold  text-primary">
                 Enter the code we texted you
@@ -253,74 +254,58 @@ export default function Home() {
             </CardFooter>
           </Card>
         ) : (
-          <Card>
+          <Card className="rounded-[6px]">
             <CardHeader className="pb-5">
-              <CardTitle>Add your details</CardTitle>
-              <CardDescription>
-                Provide a photo and basic information
-              </CardDescription>
+              <CardTitle className="text-2xl font-semibold  text-primary">
+                Add your details
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-24 h-24 bg-gray-100 rounded-md overflow-hidden flex items-center justify-center">
-                  {photoPreview ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={photoPreview}
-                      alt="preview"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-sm text-gray-500">Photo</span>
-                  )}
-                </div>
+              <div className="flex items-center justify-center gap-4 mb-4">
+                {/* Use PhotoUploadBox for photo upload, pass state handlers */}
                 <div>
-                  <input
-                    id="photo"
-                    type="file"
-                    accept="image/*"
-                    onChange={handlePhotoChange}
-                    className="hidden"
+                  <PhotoUploadBox
+                    onChange={setPhotoFile}
+                    onPreviewChange={setPhotoPreview}
+                    value={photoFile}
+                    preview={photoPreview}
                   />
-                  <label
-                    htmlFor="photo"
-                    className="inline-block cursor-pointer rounded-md bg-primary px-3 py-2 text-white"
-                  >
-                    Upload Photo
-                  </label>
                 </div>
               </div>
 
               <div className="space-y-4">
                 <FloatingInput
                   id="fullName"
-                  label="Full Name"
+                  label="Name"
                   value={name}
+                  placeholder="Enter your Full Name"
                   onChange={(e) =>
                     setName((e.target as HTMLInputElement).value)
                   }
-                  className="w-full rounded-md border border-input bg-transparent px-3 py-2 md:text-sm"
+                  className="w-full h-[54px] rounded-md border border-input bg-transparent px-3 py-2 md:text-sm"
                 />
 
                 <FloatingInput
                   id="email"
                   label="Email"
                   type="email"
+                  placeholder="Enter your Email Address"
                   value={email}
                   onChange={(e) =>
                     setEmail((e.target as HTMLInputElement).value)
                   }
-                  className="w-full rounded-md border border-input bg-transparent px-3 py-2 md:text-sm"
+                  className="w-full h-[54px]rounded-md border border-input bg-transparent px-3 py-2 md:text-sm"
                 />
 
                 <FloatingInput
                   id="qualification"
                   label="Qualification"
                   value={qualification}
+                  placeholder="Enter Your Qualification"
                   onChange={(e) =>
                     setQualification((e.target as HTMLInputElement).value)
                   }
-                  className="w-full rounded-md border border-input bg-transparent px-3 py-2 md:text-sm"
+                  className="w-full h-[54px] rounded-md border border-input bg-transparent px-3 py-2 md:text-sm"
                 />
               </div>
             </CardContent>
@@ -330,7 +315,7 @@ export default function Home() {
                 disabled={!name || !email || !qualification || !photoFile}
                 onClick={handleFinish}
               >
-                Finish
+                Get Started
               </Button>
             </CardFooter>
           </Card>

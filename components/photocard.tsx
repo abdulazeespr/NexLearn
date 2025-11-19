@@ -1,14 +1,36 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 
-export default function PhotoUploadBox() {
+type PhotoUploadBoxProps = {
+  onChange?: (file: File | null) => void;
+  onPreviewChange?: (preview: string | null) => void;
+  value?: File | null;
+  preview?: string | null;
+};
+
+export default function PhotoUploadBox({
+  onChange,
+  onPreviewChange,
+  value,
+  preview,
+}: PhotoUploadBoxProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [internalPreview, setInternalPreview] = useState<string | null>(null);
+
+  // Sync preview from parent if provided
+  const displayPreview = preview ?? internalPreview;
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    const file = e.target.files?.[0] ?? null;
     if (file) {
-      setPreview(URL.createObjectURL(file));
+      const url = URL.createObjectURL(file);
+      setInternalPreview(url);
+      onChange?.(file);
+      onPreviewChange?.(url);
+    } else {
+      setInternalPreview(null);
+      onChange?.(null);
+      onPreviewChange?.(null);
     }
   };
 
@@ -17,9 +39,9 @@ export default function PhotoUploadBox() {
       className="w-40 h-40 border border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition"
       onClick={() => fileInputRef.current?.click()}
     >
-      {preview ? (
+      {displayPreview ? (
         <img
-          src={preview}
+          src={displayPreview}
           alt="preview"
           className="w-full h-full object-cover rounded-xl"
         />
