@@ -6,6 +6,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import PhoneInput from "react-phone-number-input/input";
 import { useState, useEffect } from "react";
 import { FloatingInput } from "@/components/floatinginput";
+import { sendOtp, verifyOtp } from "@/lib/api";
+import { useAppDispatch } from "@/store/hooks";
+import { setTokens } from "@/store/authSlice";
 
 
 export default function Home() {
@@ -30,8 +33,46 @@ export default function Home() {
     return () => URL.revokeObjectURL(url);
   }, [photoFile]);
 
-  const handleGetStarted = () => {
-    setStep('sms');
+  const handleGetStarted = async () => {
+    if (!phone) return;
+    try {
+      const res = await sendOtp(phone);
+      if (res.success) {
+        setStep('sms');
+      } else {
+        alert(res.message);
+      }
+    } catch (err) {
+      alert("Failed to send OTP. Please try again.");
+    }
+  };
+
+  const dispatch = useAppDispatch();
+
+  const handleVerify = async () => {
+    if (!phone || !smsCode) return;
+    try {
+      const res = await verifyOtp(phone, smsCode);
+      if (res.success) {
+        if (res.login) {
+          // store tokens in redux
+          dispatch(setTokens({
+            access_token: res.access_token ?? "",
+            refresh_token: res.refresh_token ?? "",
+            token_type: res.token_type ?? "",
+          }));
+          // user is logged in — proceed or redirect as needed
+          setStep('details');
+        } else {
+          // not an existing user, proceed to details flow
+          setStep('details');
+        }
+      } else {
+        alert(res.message || "OTP verification failed");
+      }
+    } catch (err) {
+      alert("Failed to verify OTP. Please try again.");
+    }
   };
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,7 +120,7 @@ export default function Home() {
               />
             </CardContent>
             <CardFooter className="mt-10">
-              <Button className="w-full" disabled={!smsCode} onClick={() => setStep('details')}>Verify</Button>
+              <Button className="w-full" disabled={!smsCode} onClick={handleVerify}>Verify</Button>
             </CardFooter>
           </Card>
         ) : (
