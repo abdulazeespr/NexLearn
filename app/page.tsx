@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import PhoneInput from "react-phone-number-input/input";
 import { useState, useEffect } from "react";
 import { FloatingInput } from "@/components/floatinginput";
-import { sendOtp, verifyOtp } from "@/lib/api";
+import { sendOtp, verifyOtp, createProfile } from "@/lib/api";
 import { useAppDispatch } from "@/store/hooks";
 import { setTokens } from "@/store/authSlice";
 
@@ -78,6 +78,40 @@ export default function Home() {
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0] ?? null;
     setPhotoFile(f);
+  };
+
+  const handleFinish = async () => {
+    if (!phone || !name || !email || !qualification || !photoFile) {
+      alert("Please fill all required fields and upload a photo.");
+      return;
+    }
+
+    try {
+      const res = await createProfile({
+        mobile: phone,
+        name,
+        email,
+        qualification,
+        profile_image: photoFile,
+      });
+
+      if (res.success) {
+        if (res.access_token || res.refresh_token) {
+          dispatch(setTokens({
+            access_token: res.access_token ?? "",
+            refresh_token: res.refresh_token ?? "",
+            token_type: "Bearer",
+          }));
+        }
+        alert(res.message || "Profile saved successfully.");
+        // further navigation or state updates can be done here
+      } else {
+        alert(res.message || "Failed to save profile.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to create profile. Please try again.");
+    }
   };
 
   return (
@@ -173,7 +207,7 @@ export default function Home() {
               </div>
             </CardContent>
             <CardFooter className="mt-10">
-              <Button className="w-full" disabled={!name || !email}>Finish</Button>
+              <Button className="w-full" disabled={!name || !email || !qualification || !photoFile} onClick={handleFinish}>Finish</Button>
             </CardFooter>
           </Card>
         )}
