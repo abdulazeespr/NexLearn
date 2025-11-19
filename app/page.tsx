@@ -48,6 +48,7 @@ export default function Home() {
   };
 
   const dispatch = useAppDispatch();
+  const [resendCooldown, setResendCooldown] = useState(0);
 
   const handleVerify = async () => {
     if (!phone || !smsCode) return;
@@ -74,6 +75,37 @@ export default function Home() {
       alert("Failed to verify OTP. Please try again.");
     }
   };
+
+  const handleResend = async () => {
+    if (!phone) return;
+    try {
+      const res = await sendOtp(phone);
+      if (res.success) {
+        alert(res.message || "OTP resent");
+        setResendCooldown(30); // 30s cooldown
+      } else {
+        alert(res.message || "Failed to resend OTP");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to resend OTP. Please try again.");
+    }
+  };
+
+  // cooldown timer for resend button
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const id = setInterval(() => {
+      setResendCooldown((s) => {
+        if (s <= 1) {
+          clearInterval(id);
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+    return () => clearInterval(id);
+  }, [resendCooldown]);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0] ?? null;
@@ -154,7 +186,12 @@ export default function Home() {
               />
             </CardContent>
             <CardFooter className="mt-10">
-              <Button className="w-full" disabled={!smsCode} onClick={handleVerify}>Verify</Button>
+              <div className="w-full flex gap-3">
+                <Button className="flex-1" disabled={!smsCode} onClick={handleVerify}>Verify</Button>
+                <Button className="flex-1" disabled={!phone || resendCooldown > 0} onClick={handleResend}>
+                  {resendCooldown > 0 ? `Resend (${resendCooldown}s)` : 'Resend Code'}
+                </Button>
+              </div>
             </CardFooter>
           </Card>
         ) : (
