@@ -1,21 +1,28 @@
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
+import React from "react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
-export function FloatingInput() {
+type FloatingInputProps = React.ComponentProps<typeof Input> & {
+  id: string;
+  label: string;
+};
+
+export function FloatingInput({ id, label, className, ...props }: FloatingInputProps) {
   return (
     <div className="relative w-full">
       <Input
-        id="sms"
-        type="text"
+        id={id}
         className={cn(
-          "peer h-12 px-3 pt-6", 
-          "focus-visible:ring-0 focus-visible:ring-offset-0"
+          "peer h-12 px-3 pt-6",
+          "focus-visible:ring-0 focus-visible:ring-offset-0",
+          className
         )}
-        placeholder=" "  // IMPORTANT for peer-placeholder behavior
+        placeholder=" "
+        {...props}
       />
       <Label
-        htmlFor="sms"
+        htmlFor={id}
         className={cn(
           "absolute left-3 top-3 text-gray-500 transition-all",
           "peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400",
@@ -23,7 +30,7 @@ export function FloatingInput() {
           "pointer-events-none"
         )}
       >
-        SMS code
+        {label}
       </Label>
     </div>
   );
