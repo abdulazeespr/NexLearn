@@ -2,19 +2,28 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import QuizQuestion from "@/components/QuizQuestion";
+import QuestionSheet from "@/components/QuestionSheet";
+import Timer from "@/components/Timer";
+import QuizControls from "@/components/QuizControls";
+import { useAppSelector } from "@/store/hooks";
 
 export default function QuizStart() {
   const router = useRouter();
+  const quiz = useAppSelector((state) => state.quiz);
+  const currentIdx = quiz.currentQuestion;
 
   return (
-    <div className="space-y-6">
-      <section className="bg-white rounded-md shadow p-6">
-        <h2 className="text-xl font-semibold">Quiz Started</h2>
-        <p className="mt-2 text-sm text-gray-600">This is a placeholder for the quiz runtime. Implement questions and timer here.</p>
-      </section>
-
-      <div className="flex items-center gap-3 ">
-        <Button onClick={() => router.push("/quiz")}>Back to Instructions</Button>
+    <div className=" text-primary w-full h-full">
+      <div className="flex flex-row flex-1 p-6 gap-6 m-2 justify-center">
+        <div className="flex flex-col w-2/3 h-full">
+          <QuizQuestion questionIndex={currentIdx} />
+          <QuizControls />
+        </div>
+        <div className="flex flex-col w-1/3">
+          <Timer />
+          <QuestionSheet />
+        </div>
       </div>
     </div>
   );
