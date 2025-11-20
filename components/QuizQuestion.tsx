@@ -90,7 +90,7 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({ questionIndex }) => {
           />
         )}
         <form className="space-y-2">
-          {question.options.map((opt: any, index) => (
+          {question.options.map((opt: any, index:any) => (
             <label
               key={opt.id}
               className="flex items-center justify-between gap-2 p-2 border rounded cursor-pointer"
