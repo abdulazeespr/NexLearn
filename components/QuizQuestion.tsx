@@ -1,6 +1,18 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectQuiz, answerQuestion } from "@/store/quizSlice";
+import { Button } from "./ui/button";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
+import Image from "next/image";
 
 interface QuizQuestionProps {
   questionIndex: number;
@@ -11,6 +23,7 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({ questionIndex }) => {
   const quiz = useSelector(selectQuiz);
   const question = quiz.data?.questions?.[questionIndex];
   const selectedOption = quiz.answers[question?.question_id] ?? null;
+  const options = ["A", "B", "C", "D"];
 
   if (!question) return null;
 
@@ -28,11 +41,46 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({ questionIndex }) => {
           {question.number}. {question.question}
         </h2>
         {question.comprehension && (
-          <div className="mb-2 p-2 bg-blue-50 rounded">
-            <span className="font-medium">Read Comprehension:</span>
-            <p className="text-sm mt-1">{question.comprehension}</p>
-          </div>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <div className="flex items-center gap-2 mb-4 cursor-pointer">
+                <Button
+                  variant="outline"
+                  className="mb-4 bg-[#177A9C] text-white"
+                >
+                  <Image
+                    src="/ArticleNyTimes.svg"
+                    alt="Read"
+                    width={20}
+                    height={18}
+                  />
+                  Read Comprehension
+                  <Image src="/arrowleft.svg" alt="Read" width={7} height={5} />
+                </Button>
+              </div>
+            </AlertDialogTrigger>
+
+            <AlertDialogContent className="max-w-xl text-primary">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-lg font-bold">
+                  Comprehensive Paragraph
+                  <hr className="my-2" />
+                </AlertDialogTitle>
+
+                <AlertDialogDescription className="text-gray-800 whitespace-pre-line text-base leading-relaxed">
+                  {question.comprehension}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+
+              <AlertDialogFooter>
+                <AlertDialogCancel className="bg-[#1C3141] text-white">
+                  Minimize
+                </AlertDialogCancel>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         )}
+
         {question.image && (
           <img
             src={question.image}
@@ -42,12 +90,14 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({ questionIndex }) => {
           />
         )}
         <form className="space-y-2">
-          {question.options.map((opt: any) => (
+          {question.options.map((opt: any, index) => (
             <label
               key={opt.id}
               className="flex items-center justify-between gap-2 p-2 border rounded cursor-pointer"
             >
-              <span>{opt.option}</span>
+              <span>
+                {options[index]}. {opt.option}
+              </span>
               <input
                 className="accent-black"
                 type="radio"
