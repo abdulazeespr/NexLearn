@@ -21,7 +21,7 @@ import { setTokens } from "@/store/authSlice";
 import PhotoUploadBox from "@/components/photocard";
 
 export default function Home() {
-  const [step, setStep] = useState<"phone" | "sms" | "details">("details");
+  const [step, setStep] = useState<"phone" | "sms" | "details">("phone");
   const [phone, setPhone] = useState<string | undefined>("");
   const [smsCode, setSmsCode] = useState("");
 

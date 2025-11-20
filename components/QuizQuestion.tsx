@@ -37,9 +37,6 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({ questionIndex }) => {
         </span>
       </div>
       <section className="bg-white rounded-md shadow p-6 mb-4">
-        <h2 className="text-lg font-semibold mb-2">
-          {question.number}. {question.question}
-        </h2>
         {question.comprehension && (
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -80,6 +77,10 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({ questionIndex }) => {
             </AlertDialogContent>
           </AlertDialog>
         )}
+        <h2 className="text-lg font-semibold mb-2">
+          {question.number}. {question.question}
+        </h2>
+        
 
         {question.image && (
           <img

@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { decrementTimer } from "@/store/quizSlice";
+import { decrementTimer, selectQuiz } from "@/store/quizSlice";
+import Image from "next/image";
 
 const formatTime = (seconds: number) => {
   const min = Math.floor(seconds / 60);
@@ -12,8 +13,7 @@ const formatTime = (seconds: number) => {
 
 const Timer: React.FC = () => {
   const dispatch = useAppDispatch();
-  const timer = useAppSelector((state) => 60);
-  const started = useAppSelector((state) => state.quiz.started || false);
+  const { timer, started } = useAppSelector(selectQuiz);
 
   useEffect(() => {
     if (!started || timer <= 0) return;
@@ -24,10 +24,12 @@ const Timer: React.FC = () => {
   }, [timer, started, dispatch]);
 
   return (
-    <div className="flex items-center gap-2 p-2 bg-white rounded shadow">
-      <span className="font-semibold">Remaining Time:</span>
-      <span className="text-2xl">{timer}</span>
-      <span className="text-lg font-mono">{formatTime(timer)}</span>
+    <div className="flex items-center gap-2 p-2 bg-white ">
+      <span className="font-normal">Remaining Time:</span>
+      <span className="text-lg font-mono bg-[#1C3141] font-normal text-white rounded px-2 py-1 flex items-center gap-2">
+        <Image src="/clock.svg" alt="Clock" width={15} height={15} />
+        {formatTime(timer)}
+        </span>
     </div>
   );
 };

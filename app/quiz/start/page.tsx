@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import QuizQuestion from "@/components/QuizQuestion";
 import QuestionSheet from "@/components/QuestionSheet";
-import Timer from "@/components/Timer";
 import QuizControls from "@/components/QuizControls";
 import { useAppSelector } from "@/store/hooks";
 
@@ -21,7 +20,6 @@ export default function QuizStart() {
           <QuizControls />
         </div>
         <div className="flex flex-col w-1/3">
-          <Timer />
           <QuestionSheet />
         </div>
       </div>

@@ -36,7 +36,7 @@ const QuizControls: React.FC = () => {
       </Button>
 
       <Button
-        className=" w-1/3"
+        className="bg-[#1C3141] w-1/3"
         variant="default"
         disabled={isLast}
         onClick={() => dispatch(setCurrentQuestion(currentIdx + 1))}

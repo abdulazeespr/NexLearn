@@ -1,8 +1,10 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectQuiz, setCurrentQuestion } from "@/store/quizSlice";
+import Timer from "./Timer";
 
 const statusColors: Record<string, string> = {
+  not_visited: "bg-gray-300 text-black",
   attended: "bg-[#4CAF50] text-white",
   not_attended: "bg-[#EE3535] text-white",
   marked_for_review: "bg-[#800080] text-white",
@@ -17,10 +19,15 @@ const QuestionSheet: React.FC = () => {
 
   return (
     <div className="p-4 bg-white rounded shadow">
-      <div className="mb-2 font-semibold">Question No. Sheet:</div>
+      <div className="flex justify-between items-center mb-2 font-normal">
+        <div>Question No. Sheet:</div>
+        <div>
+          <Timer/>
+        </div>
+        </div>
       <div className="grid grid-cols-10 gap-2">
         {questions.map((q: any, idx: number) => {
-          const status = quiz.status[q.question_id] || "not_attended";
+          const status = quiz.status[q.question_id] || "not_visited";
           const isCurrent = quiz.currentQuestion === idx;
           return (
             <button
