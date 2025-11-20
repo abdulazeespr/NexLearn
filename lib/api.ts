@@ -10,6 +10,22 @@ const api = axios.create({
   },
 });
 
+export type QuizAnswerPayload = {
+  question_id: number;
+  selected_option_id: number | null;
+};
+
+export type SubmitAnswersResponse = {
+  success: boolean;
+  exam_history_id: string;
+  score: number;
+  correct: number;
+  wrong: number;
+  not_attended: number;
+  submitted_at: string;
+  details: any[];
+};
+
 export async function sendOtp(
   mobile: string
 ): Promise<{ success: boolean; message: string }> {
@@ -23,6 +39,8 @@ export async function sendOtp(
   });
   return response.data;
 }
+
+
 
 export async function verifyOtp(
   mobile: string,
@@ -93,5 +111,22 @@ export async function getQuizQuestions(token: string): Promise<{
       Authorization: `Bearer ${token}`,
     },
   });
+  return response.data;
+}
+
+export async function submitAnswers(
+  token: string,
+  answers: QuizAnswerPayload[]
+): Promise<SubmitAnswersResponse> {
+  const formData = new FormData();
+  formData.append("answers", JSON.stringify(answers));
+
+  const response = await api.post("/answers/submit", formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
   return response.data;
 }
